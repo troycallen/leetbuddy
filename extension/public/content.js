@@ -7,16 +7,31 @@ if (window.location.pathname.includes('/problems/')) {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "CREATE_ROOM") {
-        // Get problem info from LeetCode page
-        const problemTitle = document.querySelector('[data-cy="question-title"]')?.textContent;
+        // Create a button element
+        const roomButton = document.createElement('button');
+        roomButton.textContent = 'MeetCode Room';
+        roomButton.style.cssText = `
+            background-color: #4f46e5;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            margin: 10px;
+        `;
         
-        // Send back to popup
-        chrome.runtime.sendMessage({
-            type: "ROOM_CREATED",
-            data: {
-                problem: problemTitle,
-                timestamp: new Date().toISOString()
-            }
-        });
+        // Find a good spot on LeetCode to inject our button
+        const targetElement = document.querySelector('[data-cy="question-title"]');
+        if (targetElement) {
+            targetElement.parentElement.appendChild(roomButton);
+            
+            // Tell popup it worked
+            chrome.runtime.sendMessage({
+                type: "ROOM_CREATED",
+                data: {
+                    problem: targetElement.textContent,
+                    timestamp: new Date().toISOString()
+                }
+            });
+        }
     }
 });
