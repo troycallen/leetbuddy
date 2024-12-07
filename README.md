@@ -18,6 +18,7 @@
 * Team mode
 * Voice chat
 * Profile customization
+* Friends Leaderboard
 
 # Installation
 Coming soon to Chrome Web Store!
