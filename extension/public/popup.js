@@ -1,16 +1,31 @@
-document.getElementById('createRoom').addEventListener('click', async () => {
-    const tabs = await chrome.tabs.query({active: true, currentWindow: true});
-    if (tabs[0].url.includes('leetcode.com')) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-            type: "CREATE_ROOM"
-        });
-    } else {
-        alert('Please navigate to a LeetCode problem first!');
-    }
-});
+document.addEventListener('DOMContentLoaded', function() {
+    const createRoomBtn = document.getElementById('createRoomBtn');
+    const joinRoomBtn = document.getElementById('joinRoomBtn');
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "ROOM_CREATED") {
-        alert(`Room created for problem: ${message.data.problem}`);
-    }
+    createRoomBtn.addEventListener('click', function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            const tab = tabs[0];
+            console.log('Current tab:', tab.url);
+            
+            if (!tab.url.includes('leetcode.com')) {
+                alert('Please navigate to LeetCode first!');
+                return;
+            }
+
+            // Try injecting content script manually if needed
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id},
+                files: ['content.js']
+            }, function() {
+                // Now try sending the message
+                chrome.tabs.sendMessage(tab.id, {type: 'CREATE_ROOM'}, function(response) {
+                    if (chrome.runtime.lastError) {
+                        console.log('Error:', chrome.runtime.lastError);
+                        return;
+                    }
+                    console.log('Success:', response);
+                });
+            });
+        });
+    });
 });

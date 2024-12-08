@@ -4,15 +4,17 @@
   "version": "1.0",
   "description": "Transform LeetCode practice into a collaborative experience!",
   "permissions": [
+    "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+    "scripting"
   ],
   "host_permissions": [
     "https://leetcode.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://leetcode.com/*"],
+      "matches": ["*://*.leetcode.com/*"],
       "js": ["content.js"]
     }
   ],
